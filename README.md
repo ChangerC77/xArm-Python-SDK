@@ -118,6 +118,7 @@ python xArm-Python-SDK/control/home.py
 python xArm-Python-SDK/control/teach.py
 ```
 ### 6. teleoperation with spacemouse
+about using spacemouse, see more details in https://github.com/ChangerC77/franka, Teleoperation setup
 ```
 python xArm-Python-SDK/control/teleoperation.py
 ```
