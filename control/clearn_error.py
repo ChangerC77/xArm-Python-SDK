@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Description: go to home position
+Description: clear error
 """
 
 import os
@@ -20,5 +20,5 @@ def main(ip):
     arm.disconnect()
 
 if __name__ == '__main__':
-    ip = '192.168.1.228'
+    ip = '192.168.1.239'
     main(ip)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Description: teach mode
+Description: start or stop teach mode
 """
 
 import os
@@ -11,15 +11,13 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 
 from xarm.wrapper import XArmAPI
 
-"""
-start or stop teach mode
-"""
-
 def teach(ip):
-    print("choose teach mode? ")
+    print("open or close teach mode? (y/n)")
     option = input("y/n: ")
     if option == 'y':
         arm = XArmAPI(ip, is_radian=True)
+        arm.set_tcp_load(0.5, [0, 0, 0])
+        arm.set_tcp_offset([0, 0, 0, 0, 0, 0])
         arm.motion_enable(enable=True)
         arm.set_mode(0)
         arm.set_state(state=0)
@@ -30,11 +28,13 @@ def teach(ip):
     elif option == 'n':
         # Turn off manual mode 
         arm = XArmAPI(ip, is_radian=True)
+        arm.set_tcp_load(0.5, [0, 0, 0])
+        arm.set_tcp_offset([0, 0, 0, 0, 0, 0])
         arm.motion_enable(enable=True)
         arm.set_mode(0)
         arm.set_state(0)
         print("exit teach mode")
 
 if __name__ == '__main__':
-    ip = '192.168.1.228'
+    ip = '192.168.1.239'
     teach(ip)

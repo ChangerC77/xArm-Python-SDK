@@ -15,12 +15,10 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 
 from xarm.wrapper import XArmAPI
 
-"""
-use spacemouse to control xarm 
-"""
-
 def main(ip):
     arm = XArmAPI(ip, is_radian=True)
+    arm.set_tcp_load(0.5, [0, 0, 0])
+    arm.set_tcp_offset([0, 0, 0, 0, 0, 0])
     arm.motion_enable(enable=True)
     arm.set_mode(0)
     arm.set_state(state=0)
@@ -63,7 +61,7 @@ def main(ip):
             time.sleep(0.01)
 
 if __name__ == "__main__":
-    ip = '192.168.1.228'
+    ip = '192.168.1.239'
     main(ip)
             
 

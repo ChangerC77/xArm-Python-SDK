@@ -41,6 +41,8 @@ def create_formated_skill_dict(joints, end_effector_positions, timestamps):
 
 def main(args):
     arm = XArmAPI(args.ip, is_radian=True)
+    arm.set_tcp_load(1, [0, 0, 0])
+    arm.set_tcp_offset([0, 0, 0, 0, 0, 0])
     arm.motion_enable(enable=True)
     arm.set_mode(0)
     arm.set_state(state=0)

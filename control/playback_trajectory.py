@@ -45,6 +45,8 @@ def main(args):
     # 初始化机械臂
     arm = XArmAPI(args.ip, is_radian=True)
     arm.motion_enable(enable=True)
+    arm.set_tcp_load(1, [0, 0, 0])
+    arm.set_tcp_offset([0, 0, 0, 0, 0, 0])
     arm.set_mode(0)
     arm.set_state(0)
     
@@ -65,6 +67,6 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--path', '-p', default='dataset/xarm_traj.pkl', required=False, help='pickle path')
-    parser.add_argument('--ip', default='192.168.1.228', help='xArm IP address')
+    parser.add_argument('--ip', default='192.168.1.239', help='xArm IP address')
     args = parser.parse_args()
     main(args)
