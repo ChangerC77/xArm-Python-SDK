@@ -69,7 +69,7 @@ option: `国标1.0平方 1.5m`
 
 根据机械臂ip地址，将PC ip地址进行设置
 
-name: `xarm 6`
+name: `xarm`
 
 IPv4: `192.168.1.220` (在`192.168.1.x`网段下即可, 设置的ip不要是0, 255和与机械臂ip相同) 
 
@@ -134,7 +134,11 @@ python xArm-Python-SDK/control/playback_trajectory.py
 ```
 python xArm-Python-SDK/control/clearn_error.py
 ```
-### 10. mode & state definition
+### 10. set tcp
+```
+python xArm-Python-SDK/control/set_tcp.py
+```
+### 11. mode & state definition
 #### 1. position control mode
 ```
 arm.set_mode(0)

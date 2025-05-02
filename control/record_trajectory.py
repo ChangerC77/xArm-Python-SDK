@@ -121,7 +121,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--time', '-t', type=float, default=35)
     parser.add_argument('--path', '-p', default='dataset/xarm_traj.pkl')
-    parser.add_argument('--ip', default='192.168.1.228', help='xArm IP address')
+    parser.add_argument('--ip', default='192.168.1.239', help='xArm IP address')
     args = parser.parse_args()
 
     main(args)
