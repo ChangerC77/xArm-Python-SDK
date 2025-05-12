@@ -118,27 +118,32 @@ python xArm-Python-SDK/control/home.py
 python xArm-Python-SDK/control/teach.py
 ```
 ### 6. teleoperation with spacemouse
-about using spacemouse, see more details in https://github.com/ChangerC77/franka, Teleoperation setup
+about using spacemouse, see more details in [spacemouse setting](https://github.com/ChangerC77/franka), Teleoperation setup
 ```
 python xArm-Python-SDK/control/teleoperation.py
 ```
-### 7. record data
+### 7. teleoperation with tracker
+about configuration of tracker, see more details in [tracker settings](https://github.com/ChangerC77/UltimateTracker_python)
+```
+python xArm-Python-SDK/control/tracker_teleoperation.py
+```
+### 8. record data
 ```
 python xArm-Python-SDK/control/record_trajectory.py
 ```
-### 8. playback data
+### 9. playback data
 ```
 python xArm-Python-SDK/control/playback_trajectory.py
 ```
-### 9. clear error
+### 10. clear error
 ```
 python xArm-Python-SDK/control/clearn_error.py
 ```
-### 10. set tcp
+### 11. set tcp
 ```
 python xArm-Python-SDK/control/set_tcp.py
 ```
-### 11. mode & state definition
+### 12. mode & state definition
 #### 1. position control mode
 ```
 arm.set_mode(0)

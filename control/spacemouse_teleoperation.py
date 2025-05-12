@@ -9,7 +9,6 @@ from spacemouse import Spacemouse
 import os
 import sys
 import time
-import argparse
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 
@@ -17,13 +16,9 @@ from xarm.wrapper import XArmAPI
 
 def main(ip):
     arm = XArmAPI(ip, is_radian=True)
-    arm.set_tcp_load(0.5, [0, 0, 0])
+    arm.set_tcp_load(0, [0, 0, 0])
     arm.set_tcp_offset([0, 0, 0, 0, 0, 0])
     arm.motion_enable(enable=True)
-    arm.set_mode(0)
-    arm.set_state(state=0)
-
-    arm.move_gohome(wait=True)
 
     print('Ready...')
 
@@ -36,7 +31,7 @@ def main(ip):
     speed = 60
 
     target_pose = arm.get_position(is_radian=False)
-    last_time = None
+    print("Target Pose: ", target_pose)
     position = target_pose[1][:3]
     rotation = target_pose[1][3:]
 
@@ -58,7 +53,7 @@ def main(ip):
             # print(f"Position: {position}, Rotation: {rotation}")
 
             arm.set_position(x=position[0], y=position[1], z=position[2], roll=rotation[0], pitch=rotation[1], yaw=rotation[2], speed=speed, wait=False, is_radian=False)
-            time.sleep(0.01)
+            time.sleep(0.005) 
 
 if __name__ == "__main__":
     ip = '192.168.1.239'

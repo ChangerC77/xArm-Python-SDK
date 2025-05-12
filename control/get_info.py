@@ -16,7 +16,7 @@ from xarm.wrapper import XArmAPI
 def get_info(ip):
     arm = XArmAPI(ip)
     arm.motion_enable(enable=True)
-    arm.set_tcp_load(1, [0, 0, 0])
+    arm.set_tcp_load(0, [0, 0, 0])
     arm.set_tcp_offset([0, 0, 0, 0, 0, 0])
     arm.set_mode(0)
     arm.set_state(state=0)
