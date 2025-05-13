@@ -46,7 +46,7 @@ def quaternion2euler(quaternion):
 
 def main(ip):
 
-    pose_0, transform = load_calibration('/home/robotics/xArm-Python-SDK/control/calibration.npz')
+    pose_0, transform = load_calibration('calibration/calibration.npz')
 
 
     """ robot """
