@@ -5,7 +5,6 @@ Description: teleoperation with spacemouse
 """
 
 import time
-from time import sleep
 from spacemouse import Spacemouse
 import os
 import sys
@@ -16,12 +15,9 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 from xarm.wrapper import XArmAPI
 
 import tracker
-from tracker import precise_wait
 import openvr
 from scipy.spatial.transform import Rotation as R
 import numpy as np
-SAMPLING_RATE = 120 
-
 
 def load_calibration(path):
     data = np.load(path)
@@ -61,7 +57,7 @@ def main(ip):
 
     arm.set_mode(7)
     arm.set_state(0)
-    speed = 200
+    speed = 300
     target_pose = arm.get_position(is_radian=False)
 
     position = np.array(target_pose[1][:3])
@@ -89,19 +85,18 @@ def main(ip):
                 if device_class == openvr.TrackedDeviceClass_GenericTracker:
                     current_pose = data_manager.convert_to_numpy(poses[1].mDeviceToAbsoluteTracking)  # [x, y, z, r_w, r_x, r_y, r_z]
                     
-                    # print("Current Pose:", current_pose)
-                    scale_factor = 500  # 可根据需求调整
+                    scale_factor = 500
 
                     transformed_pose= apply_transform(current_pose, transform, pose_0)
-                    transformed_pose[1,3] *=-1
+                    transformed_pose[1,3] *= -1
                     current_pose= transformed_pose[:3,3] * scale_factor
-                    current_rota = np.array(transformed_pose[:3,:3]) * 0.1
+                    current_rota = np.array(transformed_pose[:3,:3]) * 0.5
                     # 从旋转矩阵创建Rotation对象
                     rot = R.from_matrix(current_rota)
 
                     # 转换为欧拉角 (默认ZYX顺序)
                     current_rota = rot.as_euler('xyz', degrees=True)  # 'xyz'表示旋转顺序，degrees=True表示返回角度制
-                    # print("current_rota:", euler_angles)
+
                     # 如果是第一帧，直接记录，不计算相对值
                     if last_pose is None:
                         last_pose = current_pose
@@ -116,24 +111,22 @@ def main(ip):
 
                     position += delta_pose
                     rotation += delta_rota
-                    # position=transformed_pose
-                    # print("position: ", position)
-                    # # 控制机械臂
+      
+                    # 控制机械臂
                     arm.set_position(
                         x=position[0],
                         y=position[1],
                         z=position[2],
-                        roll=rotation[0],
-                        pitch=rotation[1],
-                        yaw=rotation[2],
+                        roll=rotation[1],
+                        pitch=-rotation[0],
+                        yaw=-rotation[2],
                         speed=speed,
                         wait=False,
                         is_radian=False
                     )
 
-                    time.sleep(0.01)
-                        
-            # precise_wait(1 / SAMPLING_RATE)
+                    time.sleep(0.005)
+
     except KeyboardInterrupt:
         print("\nStopping data collection...")
         arm.set_mode(0)
