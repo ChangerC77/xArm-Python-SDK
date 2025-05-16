@@ -6,6 +6,7 @@ Description: start or stop teach mode
 
 import os
 import sys
+import time
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 
@@ -15,9 +16,15 @@ def teach(ip):
     print("open or close teach mode? (y/n)")
     option = input("y/n: ")
     if option == 'y':
-        arm = XArmAPI(ip, is_radian=True)
-        arm.set_tcp_load(0.5, [0, 0, 0])
-        arm.set_tcp_offset([0, 0, 0, 0, 0, 0])
+        arm = XArmAPI(ip)
+        time.sleep(0.5)
+
+        #clean error and warn
+        if arm.warn_code != 0:
+            arm.clean_warn()
+        if arm.error_code != 0:
+            arm.clean_error()
+
         arm.motion_enable(enable=True)
         arm.set_mode(0)
         arm.set_state(state=0)
@@ -27,9 +34,7 @@ def teach(ip):
         arm.set_state(0)
     elif option == 'n':
         # Turn off manual mode 
-        arm = XArmAPI(ip, is_radian=True)
-        arm.set_tcp_load(0.5, [0, 0, 0])
-        arm.set_tcp_offset([0, 0, 0, 0, 0, 0])
+        arm = XArmAPI(ip)
         arm.motion_enable(enable=True)
         arm.set_mode(0)
         arm.set_state(0)

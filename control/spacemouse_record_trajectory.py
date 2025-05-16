@@ -4,8 +4,11 @@
 Description: record data (action and timestamp) using teleoperation with spacemouse and save as pkl
 """
 
+import numpy as np
 import argparse
 import time
+from spacemouse import Spacemouse
+from scipy.spatial.transform import Rotation as R
 import pickle as pkl
 import os
 import sys
@@ -38,25 +41,28 @@ def create_formated_skill_dict(joints, end_effector_positions, timestamps):
 
 def main(args):
     arm = XArmAPI(args.ip)
-    time.sleep(0.5)
-
-    #clean error and warn
-    if arm.warn_code != 0:
-        arm.clean_warn()
-    if arm.error_code != 0:
-        arm.clean_error()
-
     arm.motion_enable(enable=True)
     arm.set_mode(0)
     arm.set_state(state=0)
 
-    print('start to record trajectory...')
+    arm.move_gohome(wait=True)
+
+    print('Ready...')
 
     # continuous control
-    arm.set_mode(2)
+    arm.set_mode(7)
     arm.set_state(0)
+    time.sleep(1)
+    max_pos_speed=0.15
+    max_rot_speed=0.25
+    dt = 2
+    speed = 60
 
+    target_pose = arm.get_position(is_radian=False)
     start_time = time.time()
+    last_time = None
+    position = target_pose[1][:3]
+    rotation = target_pose[1][3:]
 
     # record data
     record_data = {
@@ -64,32 +70,54 @@ def main(args):
         'end_effector_positions': [],
         'timestamps': []
     }
-    try:
-        while True:
+
+    with Spacemouse(deadzone=0.3) as sm:
+        while last_time is None or (last_time - start_time) < args.time:
+        # while True:
             # action
             record_data['joints'].append(arm.get_servo_angle(is_radian=False)[1])
             record_data['end_effector_positions'].append(arm.get_position(is_radian=False)[1])
             # time 
             record_data['timestamps'].append(str(int(time.time() * 1000 - start_time))) 
 
-            # 保存数据
-            skill_dict = create_formated_skill_dict(
-                record_data['joints'],
-                record_data['end_effector_positions'],
-                record_data['timestamps']
-            )
+            # spacemouse
+            sm_state = sm.get_motion_state_transformed()
+            dpos = sm_state[:3] * (max_pos_speed * dt)
+            drot = sm_state[3:] * (max_rot_speed * dt)
 
-            with open(args.path, 'wb') as f:
-                pkl.dump(skill_dict, f)
-            print(f"save trajectory finished: {args.path}")
-    except:
-        # 安全关闭
-        arm.set_mode(0)
-        arm.set_state(0)
-        arm.disconnect()
+            if not sm.is_button_pressed(0):
+                # translation mode
+                drot[:] = 0
+            else:
+                dpos[:] = 0
+    
+            position += dpos
+            rotation += drot
+            # print(f"Position: {position}, Rotation: {rotation}")
+
+            arm.set_position(x=position[0], y=position[1], z=position[2], roll=rotation[0], pitch=rotation[1], yaw=rotation[2], speed=speed, wait=False, is_radian=False)
+            time.sleep(0.01)
+            last_time = time.time()
+    
+    # 保存数据
+    skill_dict = create_formated_skill_dict(
+        record_data['joints'],
+        record_data['end_effector_positions'],
+        record_data['timestamps']
+    )
+
+    with open(args.path, 'wb') as f:
+        pkl.dump(skill_dict, f)
+    print(f"save trajectory finished: {args.path}")
+
+    # 安全关闭
+    arm.set_mode(0)
+    arm.disconnect()
 
 if __name__ == "__main__":
+    # init
     parser = argparse.ArgumentParser()
+    parser.add_argument('--time', '-t', type=float, default=35)
     parser.add_argument('--path', '-p', default='dataset/xarm_traj.pkl')
     parser.add_argument('--ip', default='192.168.1.239', help='xArm IP address')
     args = parser.parse_args()

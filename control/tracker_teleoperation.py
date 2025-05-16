@@ -45,14 +45,19 @@ def quaternion2euler(quaternion):
     return euler
 
 def main(ip):
-
+    # load calibration file
     pose_0, transform = load_calibration('calibration/calibration.npz')
 
-
     """ robot """
-    arm = XArmAPI(ip, is_radian=True)
-    arm.set_tcp_load(0, [0, 0, 0])
-    arm.set_tcp_offset([0, 0, 0, 0, 0, 0])
+    arm = XArmAPI(ip)
+    time.sleep(0.5)
+
+    #clean error and warn
+    if arm.warn_code != 0:
+        arm.clean_warn()
+    if arm.error_code != 0:
+        arm.clean_error()
+
     arm.motion_enable(enable=True)
 
     arm.set_mode(7)

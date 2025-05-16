@@ -43,10 +43,16 @@ def playback(arm, trajectory):
 
 def main(args):
     # 初始化机械臂
-    arm = XArmAPI(args.ip, is_radian=True)
+    arm = XArmAPI(args.ip)
+    time.sleep(0.5)
+
+    #clean error and warn
+    if arm.warn_code != 0:
+        arm.clean_warn()
+    if arm.error_code != 0:
+        arm.clean_error()
+
     arm.motion_enable(enable=True)
-    arm.set_tcp_load(1, [0, 0, 0])
-    arm.set_tcp_offset([0, 0, 0, 0, 0, 0])
     arm.set_mode(0)
     arm.set_state(0)
     

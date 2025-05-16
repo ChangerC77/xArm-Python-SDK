@@ -120,7 +120,7 @@ python xArm-Python-SDK/control/teach.py
 ### 6. teleoperation with spacemouse
 about using spacemouse, see more details in [spacemouse setting](https://github.com/ChangerC77/franka), Teleoperation setup
 ```
-python xArm-Python-SDK/control/teleoperation.py
+python xArm-Python-SDK/control/spacemouse_teleoperation.py
 ```
 ### 7. teleoperation with tracker
 about configuration of tracker, see more details in [tracker settings](https://github.com/ChangerC77/UltimateTracker_python)
