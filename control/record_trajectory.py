@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Description: record data (action and timestamp) using teleoperation with spacemouse and save as pkl
+Description: record data (action and timestamp) and save as pkl
 """
 
 import argparse
@@ -9,10 +9,7 @@ import time
 import pickle as pkl
 import os
 import sys
-import time
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
-
+import threading
 from xarm.wrapper import XArmAPI
 
 def create_formated_skill_dict(joints, end_effector_positions, timestamps):
@@ -36,7 +33,15 @@ def create_formated_skill_dict(joints, end_effector_positions, timestamps):
     }
     return {0: skill_dict}  # 0表示技能开始时间
 
+def wait_for_enter(stop_event):
+    """Thread function to wait for Enter key press"""
+    input()  # This will block until Enter is pressed
+    stop_event.set()
+
 def main(args):
+    # Create dataset directory if it doesn't exist
+    os.makedirs(os.path.dirname(args.path), exist_ok=True)
+    
     arm = XArmAPI(args.ip)
     time.sleep(0.5)
 
@@ -51,6 +56,7 @@ def main(args):
     arm.set_state(state=0)
 
     print('start to record trajectory...')
+    print('Press Enter to stop recording...')
 
     # continuous control
     arm.set_mode(2)
@@ -64,25 +70,40 @@ def main(args):
         'end_effector_positions': [],
         'timestamps': []
     }
+
+    # Create event to signal stopping
+    stop_event = threading.Event()
+    # Start thread to monitor for Enter key
+    input_thread = threading.Thread(target=wait_for_enter, args=(stop_event,))
+    input_thread.daemon = True
+    input_thread.start()
+
     try:
-        while True:
+        while not stop_event.is_set():
             # action
             record_data['joints'].append(arm.get_servo_angle(is_radian=False)[1])
             record_data['end_effector_positions'].append(arm.get_position(is_radian=False)[1])
             # time 
             record_data['timestamps'].append(str(int(time.time() * 1000 - start_time))) 
 
-            # 保存数据
-            skill_dict = create_formated_skill_dict(
-                record_data['joints'],
-                record_data['end_effector_positions'],
-                record_data['timestamps']
-            )
+            # Small delay to prevent overwhelming the system
+            time.sleep(0.01)
 
-            with open(args.path, 'wb') as f:
-                pkl.dump(skill_dict, f)
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        
+    finally:
+        # 保存数据
+        skill_dict = create_formated_skill_dict(
+            record_data['joints'],
+            record_data['end_effector_positions'],
+            record_data['timestamps']
+        )
+        
+        with open(args.path, 'wb') as f:
+            pkl.dump(skill_dict, f)
             print(f"save trajectory finished: {args.path}")
-    except:
+
         # 安全关闭
         arm.set_mode(0)
         arm.set_state(0)
