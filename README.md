@@ -159,6 +159,10 @@ arm.set_state(0)
 arm.set_mode(7)
 arm.set_state(0)
 ```
+### 13. force sensor
+```
+python xArm-Python-SDK/control/read_force_sensor.py
+```
 
 ## Doc
 - #### [API Document](doc/api/xarm_api.md)
