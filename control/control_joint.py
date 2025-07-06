@@ -27,8 +27,10 @@ def main(ip):
     arm.set_state(state=0)
 
     speed = 50
-    angle = [12.99749, -7.349731, 74.683387, 93.783279, 6.648258, 95.126235, -42.974241] # initial joint position
-    arm.set_servo_angle(angle=angle, speed=speed, is_radian=False, wait=True)
+    # angle = [86.586356, -18.808887, 6.007405, 33.076395, 3.213376, 51.606251, 134.999972] # initial joint position
+    # angle = [1.764366, -0.529208, -0.046031, 0.807547, -0.075704, 1.225679, -0.581361]
+    angle = [1.478742, -0.607456, 0.128854, 0.780796, -0.071136, 1.63369, -1.524777]
+    arm.set_servo_angle(angle=angle, speed=speed, is_radian=True, wait=True)
     print(arm.get_servo_angle(), arm.get_servo_angle(is_radian=False))
 
     time.sleep(3)

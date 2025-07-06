@@ -45,22 +45,22 @@ def main(args):
     arm = XArmAPI(args.ip)
     time.sleep(0.5)
 
-    #clean error and warn
-    if arm.warn_code != 0:
-        arm.clean_warn()
-    if arm.error_code != 0:
-        arm.clean_error()
+    # #clean error and warn
+    # if arm.warn_code != 0:
+    #     arm.clean_warn()
+    # if arm.error_code != 0:
+    #     arm.clean_error()
 
-    arm.motion_enable(enable=True)
-    arm.set_mode(0)
-    arm.set_state(state=0)
+    # arm.motion_enable(enable=True)
+    # arm.set_mode(0)
+    # arm.set_state(state=0)
 
     print('start to record trajectory...')
     print('Press Enter to stop recording...')
 
     # continuous control
-    arm.set_mode(2)
-    arm.set_state(0)
+    # arm.set_mode(2)
+    # arm.set_state(0)
 
     start_time = time.time()
 
@@ -105,9 +105,9 @@ def main(args):
             print(f"save trajectory finished: {args.path}")
 
         # 安全关闭
-        arm.set_mode(0)
-        arm.set_state(0)
-        arm.disconnect()
+        # arm.set_mode(0)
+        # arm.set_state(0)
+        # arm.disconnect()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

@@ -95,7 +95,7 @@ def main(ip):
                     transformed_pose= apply_transform(current_pose, transform, pose_0)
                     transformed_pose[1,3] *= -1
                     current_pose= transformed_pose[:3,3] * scale_factor
-                    current_rota = np.array(transformed_pose[:3,:3]) * 0.5
+                    current_rota = np.array(transformed_pose[:3,:3]) * 0.25
                     # 从旋转矩阵创建Rotation对象
                     rot = R.from_matrix(current_rota)
 
@@ -122,8 +122,8 @@ def main(ip):
                         x=position[0],
                         y=position[1],
                         z=position[2],
-                        roll=rotation[1],
-                        pitch=-rotation[0],
+                        roll=rotation[0],
+                        pitch=-rotation[1],
                         yaw=-rotation[2],
                         speed=speed,
                         wait=False,
@@ -134,10 +134,10 @@ def main(ip):
 
     except KeyboardInterrupt:
         print("\nStopping data collection...")
-        arm.set_mode(0)
-        arm.set_state(state=0)
+        # arm.set_mode(0)
+        # arm.set_state(state=0)
 
-        arm.move_gohome(wait=True)
+        # arm.move_gohome(wait=True)
     finally:
         vr_manager.shutdown_vr_system()
        

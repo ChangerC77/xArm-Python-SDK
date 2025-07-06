@@ -3,11 +3,12 @@
 """
 Description: get the info about the arm
 """
-from xarm import XArmAPI
-
 import os
 import sys
-import time
+home_dir = os.path.expanduser('~')  # 获取用户家目录
+prometheus_dir = os.path.join(home_dir, 'Prometheus')  # 构建 ~/Prometheus 路径
+sys.path.append(prometheus_dir)  # 添加到 Python 路径
+from xarm import XArmAPI
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 
@@ -32,9 +33,13 @@ def get_info(ip):
     # print('position(radian):', arm.get_position(is_radian=True))
 
     # joint position
-    joint_position = arm.get_servo_angle(is_radian=False)
+    joint_position = arm.get_servo_angle(is_radian=True)
     print('joint position(°):', joint_position[1])
     # print('angles(radian):', arm.get_servo_angle(is_radian=True))
+
+    # tcp load
+    print('* tcp_load:', arm.tcp_load)
+    print('* tcp_offset:', arm.tcp_offset)
 
     arm.disconnect()
 

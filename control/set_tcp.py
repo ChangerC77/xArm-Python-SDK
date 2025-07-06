@@ -16,7 +16,7 @@ from xarm.wrapper import XArmAPI
 
 def main(ip):
     arm = XArmAPI(ip)
-    arm.set_tcp_load(0.5, center_of_gravity=[0, 0, 0])  # set TCP load
+    arm.set_tcp_load(1.5, [0, 0, 0])  # set TCP load
     arm.set_tcp_offset([0, 0, 0, 0, 0, 0])
 
     time.sleep(3)
