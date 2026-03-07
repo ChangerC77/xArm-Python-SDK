@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Description: 6 dof eef pose control
+Description: clear error with YAML config
 """
 
 import os
@@ -9,28 +9,18 @@ import sys
 import time
 import yaml
 import argparse
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 
 from xarm.wrapper import XArmAPI
 
 def main(ip):
+    print(f"connecting xarm with: {ip}")
     arm = XArmAPI(ip)
-    time.sleep(0.5)
-
-    #clean error and warn
-    if arm.warn_code != 0:
-        arm.clean_warn()
-    if arm.error_code != 0:
-        arm.clean_error()
-
-    arm.motion_enable(enable=True)
-    arm.set_mode(0)
-    arm.set_state(state=0)
-
-    pose = [251.542175, -5.547043, 207.96402, 82.510735, -88.606949, 97.333669]
-    arm.set_position(x=pose[0], y=pose[1], z=pose[2], roll=pose[3], pitch=pose[4], yaw=pose[5], speed=100, is_radian=False, wait=True)
-
-    print("eef pose (mm, degrees):", arm.get_position(is_radian=False)[1])
+    arm.clean_error()
+    
+    time.sleep(0.1)
+    arm.disconnect()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -40,4 +30,5 @@ if __name__ == '__main__':
     with open(args.config, 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)
         ip = config.get('ip')
+
     main(ip)

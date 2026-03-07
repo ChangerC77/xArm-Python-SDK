@@ -6,6 +6,7 @@ Description: read pkl file and echo data
 
 import pickle
 import argparse
+import yaml
 
 def main(args):
     with open(args.path, 'rb') as file:
@@ -32,5 +33,10 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--path', default='dataset/xarm_traj.pkl', required=False, help='pickle path')
+    parser.add_argument('--config', type=str, default='config/config.yaml', help='YAML file path')
     args = parser.parse_args()
+
+    with open(args.config, 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
+        args.path = config.get('path')
     main(args)

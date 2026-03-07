@@ -4,7 +4,6 @@
 Description: record data (action and timestamp) using teleoperation with spacemouse and save as pkl
 """
 
-import numpy as np
 import argparse
 import time
 from spacemouse import Spacemouse
@@ -13,6 +12,7 @@ import pickle as pkl
 import os
 import sys
 import time
+import yaml
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 
@@ -121,5 +121,11 @@ if __name__ == "__main__":
     parser.add_argument('--path', '-p', default='dataset/xarm_traj.pkl')
     parser.add_argument('--ip', default='192.168.1.239', help='xArm IP address')
     args = parser.parse_args()
+
+    with open(args.config, 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
+        args.ip = config.get('ip')
+        args.path = config.get('path', args.path)
+        args.time = config.get('time', args.time)
 
     main(args)

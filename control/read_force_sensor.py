@@ -5,6 +5,8 @@ Description: read force raw data and external data
 """
 
 import time
+import yaml
+import argparse
 from xarm.wrapper import XArmAPI
 
 def main(ip):
@@ -30,5 +32,11 @@ def main(ip):
 
 
 if __name__ == '__main__':
-    ip = '192.168.1.239'
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config', type=str, default='config/config.yaml', help='YAML file path')
+    args = parser.parse_args()
+
+    with open(args.config, 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
+        ip = config.get('ip')
     main(ip)

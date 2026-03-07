@@ -7,6 +7,8 @@ Description: joint position control
 import os
 import sys
 import time
+import yaml
+import argparse
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 
@@ -27,13 +29,19 @@ def main(ip):
     arm.set_state(state=0)
 
     speed = 50
-    angle = [12.99749, -7.349731, 74.683387, 93.783279, 6.648258, 95.126235, -42.974241] # initial joint position
+    angle = [-0.900002, -23.600017, 0.20002, 3.399989, -180.00002, 62.699975, 180.00002]
     arm.set_servo_angle(angle=angle, speed=speed, is_radian=False, wait=True)
-    print(arm.get_servo_angle(), arm.get_servo_angle(is_radian=False))
+    print("joint angles (degrees):", arm.get_servo_angle(is_radian=False)[1])
 
     time.sleep(3)
     arm.disconnect()
 
 if __name__ == '__main__':
-    ip = '192.168.1.239'
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config', type=str, default='config/config.yaml', help='YAML file path')
+    args = parser.parse_args()
+
+    with open(args.config, 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
+        ip = config.get('ip')
     main(ip)

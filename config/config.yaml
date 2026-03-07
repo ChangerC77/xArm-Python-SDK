@@ -1,0 +1,10 @@
+ip: 192.168.1.244
+path: dataset/xarm_traj.pkl
+
+# xarm tcp configuration
+tcp_config:
+  load_weight: 0.5
+  center_of_gravity: [0, 0, 0]
+  offset: [0, 0, 0, 0, 0, 0]
+
+freq: 100

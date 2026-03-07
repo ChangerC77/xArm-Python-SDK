@@ -7,6 +7,7 @@ trajectory playback
 import os
 import sys
 import time
+import yaml
 import argparse
 import pickle
 import numpy as np
@@ -157,15 +158,16 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--path', '-p', default='dataset/xarm_traj.pkl', help='Path to trajectory pickle file')
+    parser.add_argument('--config', type=str, default='config/config.yaml', help='YAML file path')
     parser.add_argument('--ip', default='192.168.1.239', help='xArm IP address')
     parser.add_argument('--speed', type=int, default=0, help='Movement speed (mm/s)')
     parser.add_argument('--acc', type=int, default=0, help='Movement acceleration (mm/s²)')
     parser.add_argument('--freq', type=int, default=100, help='Resampling frequency (Hz)')
     args = parser.parse_args()
-    
-    try:
-        main(args)
-    except KeyboardInterrupt:
-        print("Program interrupted by user")
-    except Exception as e:
-        print(f"Unexpected error: {e}")
+    with open(args.config, 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
+        args.ip = config.get('ip')
+        args.path = config.get('path', args.path)
+        args.freq = config.get('freq', args.freq)
+
+    main(args)

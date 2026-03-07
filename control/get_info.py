@@ -7,7 +7,8 @@ from xarm import XArmAPI
 
 import os
 import sys
-import time
+import yaml
+import argparse
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 
@@ -39,5 +40,11 @@ def get_info(ip):
     arm.disconnect()
 
 if __name__ == '__main__':
-    ip = '192.168.1.239'
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config', type=str, default='config/config.yaml', help='YAML file path')
+    args = parser.parse_args()
+
+    with open(args.config, 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
+        ip = config.get('ip')
     get_info(ip)

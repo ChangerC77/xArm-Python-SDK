@@ -8,7 +8,7 @@ import argparse
 import time
 import pickle as pkl
 import os
-import sys
+import yaml
 import threading
 from xarm.wrapper import XArmAPI
 
@@ -112,7 +112,13 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--path', '-p', default='dataset/xarm_traj.pkl')
-    parser.add_argument('--ip', default='192.168.1.239', help='xArm IP address')
+    parser.add_argument('--ip', default='192.168.1.244', help='xArm IP address')
+    parser.add_argument('--config', type=str, default='config/config.yaml', help='YAML file path')
     args = parser.parse_args()
+
+    with open(args.config, 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
+        args.ip = config.get('ip')
+        args.path = config.get('path')
 
     main(args)
